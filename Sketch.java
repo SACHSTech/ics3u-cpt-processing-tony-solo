@@ -3,12 +3,24 @@ import processing.core.PApplet;
 public class Sketch extends PApplet {
 	
 	
+  // global variables
+  int width = 800;
+  int height = 800;
+  int rows = 25;
+  int columns = 25;
+  float unitWidth = width/rows;
+  float unitHeight = width/columns;
+  float unitX;
+  float unitY;
+
+  boolean[][] grid = new boolean[rows][columns];
+
   /**
    * Called once at the beginning of execution, put your size all in this method
    */
   public void settings() {
 	// put your size call here
-    size(400, 400);
+    size(width, height);
   }
 
   /** 
@@ -16,7 +28,17 @@ public class Sketch extends PApplet {
    * values here i.e background, stroke, fill etc.
    */
   public void setup() {
-    background(210, 255, 173);
+    background(200);
+
+    for (int i = 1; i < rows-1; i++) {
+      for (int j = 1; j < columns-1; j++) {
+        unitX = unitWidth * i;
+        unitY = unitHeight * j;
+        noFill();
+        rect(unitX, unitY, unitWidth, unitHeight);
+      }
+     
+    }
   }
 
   /**
@@ -24,13 +46,10 @@ public class Sketch extends PApplet {
    */
   public void draw() {
 	  
-	// sample code, delete this stuff
-    stroke(128);
-    line(150, 25, 270, 350);  
-
-    stroke(255);
-    line(50, 125, 70, 50);  
   }
   
-  // define other methods down here.
+  // method
+
+
+
 }
