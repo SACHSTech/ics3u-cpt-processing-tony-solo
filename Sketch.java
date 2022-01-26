@@ -2,8 +2,8 @@ import processing.core.PApplet;
 import java.util.*;
 
 public class Sketch extends PApplet {
-	
-	
+
+
   // GLOBAL VARIABLES
   int width = 800;
   int height = 800;
@@ -16,14 +16,80 @@ public class Sketch extends PApplet {
   float unitY;
   float playerWidth = unitWidth;
   float playerHeight = unitHeight;
-  float playerX = playerWidth;
-  float playerY = playerHeight;
+  float playerX = 0;
+  float playerY = 0;
 
   boolean menuScene;
   boolean gameScene;
   boolean gameOverScene;
+  boolean level1 = true;
+  boolean level2;
+  boolean level3;
 
-  boolean[][] grid = new boolean[rows][columns];
+  // level design (0 = empty, 1 = filled in)
+  int [][] grid1 = { {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}  };
+  
+  int [][] grid2 = { {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}  };
+
+  int [][] grid3 = { {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}  };                    
+               
 
 
   // MAIN METHODS
@@ -59,6 +125,7 @@ public class Sketch extends PApplet {
   }
 
 
+
   // OTHER METHODS
   // menu scene
   public void menuScene() {
@@ -66,7 +133,7 @@ public class Sketch extends PApplet {
 
     fill(42,255,15);
     rect(width/2-50, height/2-25, 100, 50);
-    if(mouseX > width/2-50 && mouseY > height/2-25 && mouseX < width/2+50 && mouseY < height/2+25 && mousePressed==true){
+    if(mouseX > width/2-50 && mouseY > height/2-25 && mouseX < width/2+50 && mouseY < height/2+25 && mousePressed) {
       menuScene = false;
       gameScene = true;
     }
@@ -76,15 +143,20 @@ public class Sketch extends PApplet {
   public void gameScene() {
     background(200);
 
-    for (int i = 1; i < rows-1; i++) {
-      for (int j = 1; j < columns-1; j++) {
-        unitX = unitWidth * i;
-        unitY = unitHeight * j;
-        noFill();
-        rect(unitX, unitY, unitWidth, unitHeight);
-      }
+    // change level accordingly
+    if (level1) {
+      level1();
+    }
+    else if (level2) {
+      level2();
+    }
+    else if (level3) {
+      level3();
     }
 
+    // goal
+    fill(0, 255, 0);
+    rect(width - unitWidth, height - unitHeight, unitWidth, unitHeight);
     if (playerX == width - unitWidth*2 && playerY == height - unitHeight*2) {
       gameScene = false;
       gameOverScene = true;
@@ -108,28 +180,56 @@ public class Sketch extends PApplet {
     
   }
   
+  // level 1
+  public void level1() {
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < columns; j++) {
+        unitX = unitWidth * i;
+        unitY = unitHeight * j;
+        //fill the obstacles in 
+        if (grid1[j][i] == 1) {
+          fill(1);
+        } 
+        else {
+          noFill();
+        }
+        rect(unitX, unitY, unitWidth, unitHeight);
+      }
+    }
+  }
+  
+  // level 2
+  public void level2() {
+
+  }
+
+  // level 3 
+  public void level3() {
+
+  }
+  
   // move player 
   public void movePlayer() {
     if (keyPressed) {
-      if (keyCode == UP && playerY > unitHeight) {
+      if (keyCode == UP && playerY > 0) {
         playerY -= playerHeight;
       }
-      else if (keyCode == DOWN && playerY < height - unitHeight*2) {
+      else if (keyCode == DOWN && playerY < height - unitHeight) {
         playerY += playerHeight;
       }
-      else if (keyCode == LEFT && playerX > unitWidth) {
+      else if (keyCode == LEFT && playerX > 0) {
         playerX -= playerWidth;
       }
-      else if (keyCode == RIGHT && playerX < width - unitWidth*2) {
+      else if (keyCode == RIGHT && playerX < width - unitWidth) {
         playerX += playerWidth;
       }
     keyCode = 0;
     delay(65);
     }
   
-    fill(0, 255, 0);
+    fill(255, 255, 0);
     rect(playerX, playerY, playerWidth, playerHeight);
-  }
+  } 
 
 
 }

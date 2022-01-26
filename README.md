@@ -19,5 +19,7 @@ Scoring is determined by # of coins collected + time remaining + difficulty mult
 
 Limitations:
 
-        - Switching direction simultaneously can cause the player to stop for a very short but noticible time
-
+        - Switching directions simultaneously can cause the player to stop for a very short but noticible time
+        - Pressing keys other than arrows while changing direction causes player to stop moving
+        - Game must be played in 800x800 resolution with 18 rows & columns as levels do not scale to screen  
+        - Rows and columns are 2 less than value inputed 
