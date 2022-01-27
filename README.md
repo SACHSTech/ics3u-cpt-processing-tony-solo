@@ -2,7 +2,7 @@
 # Maze Run
 Maze Run is a 2D top-down game where you traverse a maze full of obstacles within a limited amount of time to win. 
 
-Reach the green highlighted goal while dodging the red obstacles. You only have one life so getting hit is game over and sends you back to level 1! 
+Reach the green highlighted goal while dodging the red obstacles. You only have one life so getting hit is game over you will have to restart from game one! 
 
 There are two difficulties which make the three levels you go through easier or harder.
 
