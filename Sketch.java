@@ -270,8 +270,15 @@ public class Sketch extends PApplet {
         rect(unitX, unitY, unitWidth, unitHeight);
 
         // fill the obstacles in
-        if (count >= 0 && count <= 100) {
-          obstacles(hashMap);
+        if (difficulty == "Easy") {
+          if (count >= 0 && count <= 100) {
+            obstacles(hashMap);
+          }
+        }
+        else if (difficulty == "Hard") {
+          if (count >= 0 && count <= 140) {
+            obstacles(hashMap);
+          }
         }
       }
     }
@@ -319,14 +326,14 @@ public class Sketch extends PApplet {
     }
     else if(mouseX > width/2-150 && mouseY > height/2 && mouseX < width/2-25 && mouseY < height/2+60) {
       buttonClicked = false;
-      difficulty = "easy";
+      difficulty = "Easy";
       menuScene = false;
       gameScene = true;
       level1 = true;
     }
     else if(mouseX > width/2+20 && mouseY > height/2 && mouseX < width/2+105 && mouseY < height/2+60) {
       buttonClicked = false;
-      difficulty = "hard";
+      difficulty = "Hard";
       menuScene = false;
       gameScene = true;
       level1 = true;
