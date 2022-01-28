@@ -6,6 +6,8 @@ public class Sketch extends PApplet {
 
 
   // GLOBAL VARIABLES
+  String difficulty; 
+
   int counter;
   int width = 800;
   int height = 800;
@@ -117,19 +119,16 @@ public class Sketch extends PApplet {
    */
   public void setup() {
     // level 1 obstacles
-    obstacles1.put(unitWidth*3, unitHeight*9);
-    obstacles1.put(unitWidth*8, unitHeight);
-    obstacles1.put(unitWidth*5, unitHeight*16);
-    obstacles1.put(unitWidth*14, unitHeight*9);
+    obstacles1();
 
     // level 2 obstacles
-    //obstacles2.put(unitWidth*, unitHeight*);
+    obstacles2();
 
     // level 3 obstacles
+    obstacles3();
 
-
-    playerX = 40;
-    playerY = 40;
+    playerX = unitWidth;
+    playerY = unitHeight;
 
     menuScene = true;
     gameScene = false;
@@ -206,10 +205,10 @@ public class Sketch extends PApplet {
 
   }
   
-  // levels
+  // draw levels
   public void levels(int [][] array, HashMap<Float, Float> hashMap) {
     // interval for obstacle appearing
-    if (count >= 170) {
+    if (count >= 165) {
       count = 0;
     }
     count++;
@@ -240,26 +239,29 @@ public class Sketch extends PApplet {
     movePlayer(array);
   }
 
-  // draw obstacle
+  // obstacle
   public void drawObstacle(float obstacleX, float obstacleY) {
     fill(255, 0, 0);
     rect(obstacleX, obstacleY, unitWidth, unitHeight);
   }
 
-  // obstacles for levels
+  // draw obstacles in levels
   public void obstacles(HashMap<Float, Float> hashMap) {
     for (float i : hashMap.keySet()) {
       drawObstacle(i, hashMap.get(i));
 
       // if player hit by obstacle
       if (playerX == i && playerY == hashMap.get(i)) {
+        // reset player position
+        playerIndexX = 0;
+        playerIndexY = 0;
+        playerX = unitWidth;
+        playerY = unitHeight;
+
+        // change scene
         level1 = false;
         level2 = false;
         level3 = false;
-        playerIndexX = 0;
-        playerIndexY = 0;
-        playerX = 40;
-        playerY = 40;
         gameScene = false;
         gameOverScene = true;
       }
@@ -268,6 +270,7 @@ public class Sketch extends PApplet {
 
   // goal
   public void goal() {
+    // draw goal
     fill(0, 255, 0);
     rect(width - unitWidth*2, height - unitHeight*2, unitWidth, unitHeight);
     
@@ -293,6 +296,7 @@ public class Sketch extends PApplet {
 
   // move player 
   public void movePlayer(int [][] array) {
+    // translate player pixel position to an index on grid array 
     playerIndexX = (int)playerX / 40;
     playerIndexY = (int)playerY / 40;
 
@@ -319,5 +323,45 @@ public class Sketch extends PApplet {
     rect(playerX, playerY, playerWidth, playerHeight);
   } 
   
+  // level 1 obstacles pos
+  public void obstacles1() {
+    obstacles1.put(unitWidth*3, unitHeight*9);
+    obstacles1.put(unitWidth*8, unitHeight);
+    obstacles1.put(unitWidth*5, unitHeight*16);
+    obstacles1.put(unitWidth*14, unitHeight*9);
+  }
+
+  // level 2 obstacles pos
+  public void obstacles2() {
+    obstacles2.put(unitWidth*5, unitHeight*3);
+    obstacles2.put(unitWidth*10, unitHeight*3);
+    obstacles2.put(unitWidth*17, unitHeight*3);
+    obstacles2.put(unitWidth*7, unitHeight*6);
+    obstacles2.put(unitWidth*7, unitHeight*13);
+    obstacles2.put(unitWidth, unitHeight*14);
+    obstacles2.put(unitWidth*15, unitHeight*13);
+    obstacles2.put(unitWidth*13, unitHeight*18);
+  }
+
+  // level 3 obstacles pos
+  public  void obstacles3() {
+    obstacles3.put(unitWidth*6, unitHeight*4);
+    obstacles3.put(unitWidth*2, unitHeight*9);
+    obstacles3.put(unitWidth*10, unitHeight*2);
+    obstacles3.put(unitWidth*1, unitHeight*3);
+    obstacles3.put(unitWidth*5, unitHeight*13);
+    obstacles3.put(unitWidth*12, unitHeight*3);
+    obstacles3.put(unitWidth*18, unitHeight*4);
+    obstacles3.put(unitWidth*8, unitHeight*9);
+    obstacles3.put(unitWidth*17, unitHeight*11);
+    obstacles3.put(unitWidth*13, unitHeight*11);
+    obstacles3.put(unitWidth*16, unitHeight*15);
+    obstacles3.put(unitWidth*4, unitHeight*18);
+    obstacles3.put(unitWidth*11, unitHeight*18);
+    obstacles3.put(unitWidth*16, unitHeight*7);
+    obstacles3.put(unitWidth*9, unitHeight*16);
+    obstacles3.put(unitWidth*15, unitHeight*15);
+  }
+
 
 }
