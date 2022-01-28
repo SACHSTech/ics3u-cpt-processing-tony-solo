@@ -29,7 +29,7 @@ public class Sketch extends PApplet {
   float unitY;
 
   boolean firstTime = true;
-  boolean buttonClicked = false;
+  boolean firstButtonClicked = false;
   boolean menuScene;
   boolean gameScene;
   boolean gameOverScene;
@@ -159,7 +159,7 @@ public class Sketch extends PApplet {
   public void menuScene() {
     background(sceneBGColour);
 
-    if (!buttonClicked) {
+    if (!firstButtonClicked) {
       fill(0, 255,  0);
       rect(width/2-60, height/2-25, 125, 60);
       textSize(145);
@@ -208,12 +208,18 @@ public class Sketch extends PApplet {
   public void gameOverScene() {
     background(sceneBGColour);
 
-    fill(255, 0, 15);
-    rect(width/2-50, height/2-25, 100, 50);
-    if(mouseX > width/2-50 && mouseY > height/2-25 && mouseX < width/2+50 && mouseY < height/2+25 && mousePressed==true){
-      gameOverScene = false;
-      menuScene = true;
-    }
+    fill(255);
+    rect(width/2-150, height/2, 125, 60);
+    rect(width/2+20, height/2, 125, 60);
+    textSize(100);
+    fill(255);
+    text("Game Over!", width/2 - 295, height/2 - 175);
+    textSize(50);
+    textSize(30);
+    fill(sceneBGColour);
+    text("Retry", width/2-123, height/2+40);
+    text("Menu", width/2+45, height/2+40);
+
   }
 
   // score scene
@@ -223,16 +229,6 @@ public class Sketch extends PApplet {
     fill(255);
     rect(width/2-150, height/2, 125, 60);
     rect(width/2+20, height/2, 125, 60);
-    if(mouseX > width/2 - 150 && mouseY > height/2 && mouseX < width/2 - 25 && mouseY < height/2 + 60 && mousePressed==true){
-      scoreScene = false;
-      gameScene = true;
-      level1 = true;
-    }
-    else if (mouseX > width/2 + 20 && mouseY > height/2 && mouseX < width/2 + 145 && mouseY < height/2 + 60 && mousePressed==true) {
-      scoreScene = false;
-      menuScene = true;
-    }
-
     textSize(145);
     fill(255);
     text("Score", width/2 - 195, height/2 - 175);
@@ -319,26 +315,50 @@ public class Sketch extends PApplet {
 
   // button
   public void mouseClicked() {
-    if(!buttonClicked) {
-      if(mouseX > width/2-60 && mouseY > height/2-25 && mouseX < width/2+65 && mouseY < height/2+35) {
-        buttonClicked = true;
+    if (menuScene) {
+      if(!firstButtonClicked) {
+        if(mouseX > width/2-60 && mouseY > height/2-25 && mouseX < width/2+65 && mouseY < height/2+35) {
+          firstButtonClicked = true;
+        }
+      }
+      else if(mouseX > width/2-150 && mouseY > height/2 && mouseX < width/2-25 && mouseY < height/2+60) {
+        firstButtonClicked = false;
+        difficulty = "Easy";
+        menuScene = false;
+        gameScene = true;
+        level1 = true;
+      }
+      else if(mouseX > width/2+20 && mouseY > height/2 && mouseX < width/2+105 && mouseY < height/2+60) {
+        firstButtonClicked = false;
+        difficulty = "Hard";
+        menuScene = false;
+        gameScene = true;
+        level1 = true;
       }
     }
-    else if(mouseX > width/2-150 && mouseY > height/2 && mouseX < width/2-25 && mouseY < height/2+60) {
-      buttonClicked = false;
-      difficulty = "Easy";
-      menuScene = false;
-      gameScene = true;
-      level1 = true;
+    else if (scoreScene) {
+      if(mouseX > width/2 - 150 && mouseY > height/2 && mouseX < width/2 - 25 && mouseY < height/2 + 60) {
+        scoreScene = false;
+        gameScene = true;
+        level1 = true;
+      }
+      else if (mouseX > width/2 + 20 && mouseY > height/2 && mouseX < width/2 + 145 && mouseY < height/2 + 60) {
+        scoreScene = false;
+        menuScene = true;
+      }
     }
-    else if(mouseX > width/2+20 && mouseY > height/2 && mouseX < width/2+105 && mouseY < height/2+60) {
-      buttonClicked = false;
-      difficulty = "Hard";
-      menuScene = false;
-      gameScene = true;
-      level1 = true;
+    else if (gameOverScene) {
+      if(mouseX > width/2 - 150 && mouseY > height/2 && mouseX < width/2 - 25 && mouseY < height/2 + 60) {
+        scoreScene = false;
+        gameScene = true;
+        level1 = true;
+      }
+      else if (mouseX > width/2 + 20 && mouseY > height/2 && mouseX < width/2 + 145 && mouseY < height/2 + 60) {
+        scoreScene = false;
+        menuScene = true;
+      }
     }
-
+    
   }
     
   // draw the obstacles in levels
