@@ -8,24 +8,27 @@ public class Sketch extends PApplet {
   // GLOBAL VARIABLES
   String difficulty; 
 
-  int counter;
   int width = 800;
   int height = 800;
-  int count;
   int rows = 20;
   int columns = 20;
+  int count;
   int playerIndexX;
   int playerIndexY;
+  int sceneBGColour = 45;
+
+  long startTime;
+  long endTime;
+  long totalTime;
 
   float unitWidth = width/rows;
   float unitHeight = width/columns;
+  float playerX = unitWidth;
+  float playerY = unitHeight;
   float unitX;
   float unitY;
-  float playerWidth = unitWidth;
-  float playerHeight = unitHeight;
-  float playerX;
-  float playerY;
 
+  boolean firstTime = true;
   boolean menuScene;
   boolean gameScene;
   boolean gameOverScene;
@@ -65,7 +68,7 @@ public class Sketch extends PApplet {
                      {1,0,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,0,1},
                      {1,0,1,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1},
                      {1,0,1,0,0,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1},
-                     {1,0,1,1,1,1,0,1,1,1,0,0,0,0,1,0,0,0,0,1},
+                     {1,0,1,1,1,1,0,1,1,0,0,0,0,0,1,0,0,0,0,1},
                      {1,0,0,0,0,0,0,0,1,1,1,0,1,1,1,0,1,1,0,1},
                      {1,1,0,1,0,1,1,0,1,1,1,0,0,0,1,1,1,1,0,1},
                      {1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,0,0,0,0,1},
@@ -73,7 +76,7 @@ public class Sketch extends PApplet {
                      {1,1,1,1,1,0,1,0,1,0,1,0,0,0,1,1,0,0,1,1},
                      {1,0,1,0,0,0,1,0,1,0,1,1,1,0,0,1,1,0,0,1},
                      {1,0,0,0,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,1},
-                     {1,0,1,0,0,0,0,0,1,0,0,0,1,1,1,0,0,0,0,1},
+                     {1,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1},
                      {1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1},
                      {1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1},
                      {1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,0,1},
@@ -87,12 +90,12 @@ public class Sketch extends PApplet {
                      {1,0,0,0,0,1,0,1,0,1,0,0,0,0,0,1,1,1,0,1},
                      {1,0,1,1,1,1,0,0,0,1,0,1,1,1,0,0,0,1,0,1},
                      {1,0,0,0,0,1,0,1,1,1,0,0,0,0,1,1,0,1,0,1},
-                     {1,0,1,1,0,1,0,1,0,0,1,1,0,1,1,1,1,0,0,1},
+                     {1,0,1,1,0,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1},
                      {1,0,0,1,0,1,0,0,0,1,1,0,1,1,0,0,0,0,1,1},
                      {1,1,0,1,0,0,1,1,0,1,1,0,0,0,1,0,1,0,1,1},
-                     {1,0,0,1,1,0,1,0,0,0,0,0,1,1,0,0,1,0,0,1},
-                     {1,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1},
-                     {1,0,0,1,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,1},
+                     {1,0,0,0,1,0,1,0,0,0,0,0,1,1,0,0,1,0,0,1},
+                     {1,0,1,1,0,0,1,1,1,0,1,1,1,1,1,1,1,1,0,1},
+                     {1,0,0,1,0,1,1,0,1,0,1,0,0,0,0,0,0,0,0,1},
                      {1,1,0,1,0,0,1,0,0,0,0,1,1,0,1,0,1,0,1,1},
                      {1,0,0,1,1,0,0,1,0,1,0,1,1,0,1,0,1,0,0,1},
                      {1,0,1,1,1,1,0,0,0,1,0,1,0,0,1,1,1,1,0,1},
@@ -119,16 +122,13 @@ public class Sketch extends PApplet {
    */
   public void setup() {
     // level 1 obstacles
-    obstacles1();
+    obstaclesPos1();
 
     // level 2 obstacles
-    obstacles2();
+    obstaclesPos2();
 
     // level 3 obstacles
-    obstacles3();
-
-    playerX = unitWidth;
-    playerY = unitHeight;
+    obstaclesPos3();
 
     menuScene = true;
     gameScene = false;
@@ -159,9 +159,9 @@ public class Sketch extends PApplet {
   // OTHER METHODS
   // menu scene
   public void menuScene() {
-    background(255);
+    background(sceneBGColour);
 
-    fill(42,255,15);
+    fill(42, 255,  15);
     rect(width/2-50, height/2-25, 100, 50);
     if(mouseX > width/2-50 && mouseY > height/2-25 && mouseX < width/2+50 && mouseY < height/2+25 && mousePressed) {
       menuScene = false;
@@ -172,11 +172,15 @@ public class Sketch extends PApplet {
 
   // game scene
   public void gameScene() {
-    background(210);
+    background(220);
 
     // change level accordingly
     if (level1) {
       levels(grid1, obstacles1);
+      if (firstTime = true) {
+        startTime = System.nanoTime();
+      firstTime = false;
+      }
     }
     else if (level2) {
       levels(grid2, obstacles2);
@@ -188,9 +192,9 @@ public class Sketch extends PApplet {
 
   // game over scene
   public void gameOverScene() {
-    background(1);
+    background(sceneBGColour);
 
-    fill(255,0,15);
+    fill(255, 0, 15);
     rect(width/2-50, height/2-25, 100, 50);
     if(mouseX > width/2-50 && mouseY > height/2-25 && mouseX < width/2+50 && mouseY < height/2+25 && mousePressed==true){
       gameOverScene = false;
@@ -200,8 +204,32 @@ public class Sketch extends PApplet {
 
   // score scene
   public void scoreScene() {
-    background(255);
+    background(sceneBGColour);
 
+    textSize(145);
+    fill(255);
+    text("Score", width/2 - 195, height/2 - 175);
+    textSize(50);
+    text("Difficulty: " + difficulty, width/2 - 190, height/2 - 110);
+    text("Clear Time: " + totalTime + " seconds", width/2 - 270, height/2 - 50);
+
+    fill(255);
+    rect(width/2-150, height/2, 125, 60);
+    rect(width/2+20, height/2, 125, 60);
+    if(mouseX > width/2 - 150 && mouseY > height/2 && mouseX < width/2 - 25 && mouseY < height/2 + 60 && mousePressed==true){
+      scoreScene = false;
+      gameScene = true;
+      level1 = true;
+    }
+    else if (mouseX > width/2 + 20 && mouseY > height/2 && mouseX < width/2 + 145 && mouseY < height/2 + 60 && mousePressed==true) {
+      scoreScene = false;
+      menuScene = true;
+    }
+
+    textSize(30);
+    fill(sceneBGColour);
+    text("Retry", width/2-123, height/2+40);
+    text("Menu", width/2+45, height/2+40);
 
   }
   
@@ -239,24 +267,20 @@ public class Sketch extends PApplet {
     movePlayer(array);
   }
 
-  // obstacle
-  public void drawObstacle(float obstacleX, float obstacleY) {
-    fill(255, 0, 0);
-    rect(obstacleX, obstacleY, unitWidth, unitHeight);
-  }
-
-  // draw obstacles in levels
+  // draw the obstacles in levels
   public void obstacles(HashMap<Float, Float> hashMap) {
+    fill(255, 0, 0);
     for (float i : hashMap.keySet()) {
-      drawObstacle(i, hashMap.get(i));
+      rect(i, hashMap.get(i), unitWidth, unitHeight);
 
       // if player hit by obstacle
       if (playerX == i && playerY == hashMap.get(i)) {
-        // reset player position
+        // reset player position & timer
         playerIndexX = 0;
         playerIndexY = 0;
         playerX = unitWidth;
         playerY = unitHeight;
+        firstTime = true;
 
         // change scene
         level1 = false;
@@ -275,8 +299,8 @@ public class Sketch extends PApplet {
     rect(width - unitWidth*2, height - unitHeight*2, unitWidth, unitHeight);
     
     if (playerX == width - unitWidth*2 && playerY == height - unitHeight*2) {
-      playerX = playerWidth;
-      playerY = playerHeight;
+      playerX = unitWidth;
+      playerY = unitHeight;
       if (level1) {
         level1 = false;
         level2 = true;
@@ -286,6 +310,8 @@ public class Sketch extends PApplet {
         level3 = true;
       }
       else if (level3) {
+        endTime = System.nanoTime();
+        totalTime = (endTime - startTime) / 1000000000;
         level3 = false;
         level1 = false;
         gameScene = false;
@@ -302,16 +328,16 @@ public class Sketch extends PApplet {
 
     if (keyPressed) {
       if (keyCode == UP && playerY > 0 && array[playerIndexY-1][playerIndexX] == 0) {
-        playerY -= playerHeight;
+        playerY -= unitHeight;
       }
       else if (keyCode == DOWN && playerY < height - unitHeight && array[playerIndexY+1][playerIndexX] == 0) {
-        playerY += playerHeight;
+        playerY += unitHeight;
       }
       else if (keyCode == LEFT && playerX > 0 && array[playerIndexY][playerIndexX-1] == 0) {
-        playerX -= playerWidth;
+        playerX -= unitWidth;
       }
       else if (keyCode == RIGHT && playerX < width - unitWidth && array[playerIndexY][playerIndexX+1] == 0) {
-        playerX += playerWidth;
+        playerX += unitWidth;
       }
 
     }
@@ -320,11 +346,11 @@ public class Sketch extends PApplet {
   
     // draw player
     fill(255, 255, 0);
-    rect(playerX, playerY, playerWidth, playerHeight);
+    rect(playerX, playerY, unitWidth, unitHeight);
   } 
   
   // level 1 obstacles pos
-  public void obstacles1() {
+  public void obstaclesPos1() {
     obstacles1.put(unitWidth*3, unitHeight*9);
     obstacles1.put(unitWidth*8, unitHeight);
     obstacles1.put(unitWidth*5, unitHeight*16);
@@ -332,7 +358,7 @@ public class Sketch extends PApplet {
   }
 
   // level 2 obstacles pos
-  public void obstacles2() {
+  public void obstaclesPos2() {
     obstacles2.put(unitWidth*5, unitHeight*3);
     obstacles2.put(unitWidth*10, unitHeight*3);
     obstacles2.put(unitWidth*17, unitHeight*3);
@@ -344,7 +370,7 @@ public class Sketch extends PApplet {
   }
 
   // level 3 obstacles pos
-  public  void obstacles3() {
+  public void obstaclesPos3() {
     obstacles3.put(unitWidth*6, unitHeight*4);
     obstacles3.put(unitWidth*2, unitHeight*9);
     obstacles3.put(unitWidth*10, unitHeight*2);
