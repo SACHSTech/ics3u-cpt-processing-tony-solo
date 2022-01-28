@@ -1,25 +1,29 @@
 import processing.core.PApplet;
 import java.util.HashMap;
 
+import javax.naming.directory.SearchControls;
+import javax.print.attribute.SetOfIntegerSyntax;
+
 
 public class Sketch extends PApplet {
 
 
   // GLOBAL VARIABLES
   String difficulty; 
+  String totalTime;
+  String currentTime;
 
   int width = 800;
   int height = 800;
   int rows = 20;
   int columns = 20;
+  int sceneBGColour = 45;
   int count;
   int playerIndexX;
   int playerIndexY;
-  int sceneBGColour = 45;
-
-  long startTime;
-  long endTime;
-  long totalTime;
+  int seconds;
+  int minutes;
+  int count2;
 
   float unitWidth = width/rows;
   float unitHeight = width/columns;
@@ -28,7 +32,6 @@ public class Sketch extends PApplet {
   float unitX;
   float unitY;
 
-  boolean firstTime = true;
   boolean firstButtonClicked = false;
   boolean menuScene;
   boolean gameScene;
@@ -191,10 +194,6 @@ public class Sketch extends PApplet {
     // change level accordingly
     if (level1) {
       levels(grid1, obstacles1);
-      if (firstTime = true) {
-        startTime = System.nanoTime();
-      firstTime = false;
-      }
     }
     else if (level2) {
       levels(grid2, obstacles2);
@@ -234,7 +233,8 @@ public class Sketch extends PApplet {
     text("Score", width/2 - 195, height/2 - 175);
     textSize(50);
     text("Difficulty: " + difficulty, width/2 - 190, height/2 - 110);
-    text("Clear Time: " + totalTime + " seconds", width/2 - 270, height/2 - 50);
+    text("Clear Time: " + totalTime, width/2 - 245, height/2 - 50);
+    
     textSize(30);
     fill(sceneBGColour);
     text("Retry", width/2-123, height/2+40);
@@ -245,10 +245,20 @@ public class Sketch extends PApplet {
   // draw levels
   public void levels(int [][] array, HashMap<Float, Float> hashMap) {
     // interval for obstacle appearing
-    if (count >= 165) {
+    if (count == 165) {
       count = 0;
     }
     count++;
+    // iterating 60 times = 1 second
+    if (count2 == 60) {
+      seconds++;
+      count2 = 0;
+    }
+    count2++;
+    if(seconds == 60) {
+      minutes++;
+      seconds = 0;
+    }
 
     // draw grid
     for (int i = 0; i < rows; i++) {
@@ -281,6 +291,17 @@ public class Sketch extends PApplet {
 
     goal();
     movePlayer(array);
+
+    if (seconds < 10) {
+      currentTime = minutes + ":" + "0" + seconds;
+    }
+    else {
+      currentTime = minutes + ":" + seconds;
+    }
+
+    fill(255);
+    textSize(25);
+    text(currentTime, width/2-15, 30);
 
   }
 
@@ -349,12 +370,12 @@ public class Sketch extends PApplet {
     }
     else if (gameOverScene) {
       if(mouseX > width/2 - 150 && mouseY > height/2 && mouseX < width/2 - 25 && mouseY < height/2 + 60) {
-        scoreScene = false;
+        gameOverScene = false;
         gameScene = true;
         level1 = true;
       }
       else if (mouseX > width/2 + 20 && mouseY > height/2 && mouseX < width/2 + 145 && mouseY < height/2 + 60) {
-        scoreScene = false;
+        gameOverScene = false;
         menuScene = true;
       }
     }
@@ -369,12 +390,14 @@ public class Sketch extends PApplet {
 
       // if player hit by obstacle
       if (playerX == i && playerY == hashMap.get(i)) {
+        System.out.println("hit");
         // reset player position & timer
         playerIndexX = 0;
         playerIndexY = 0;
         playerX = unitWidth;
         playerY = unitHeight;
-        firstTime = true;
+        seconds = 0;
+        minutes = 0;
 
         // change scene
         level1 = false;
@@ -405,8 +428,10 @@ public class Sketch extends PApplet {
         level3 = true;
       }
       else if (level3) {
-        endTime = System.nanoTime();
-        totalTime = (endTime - startTime) / 1000000000;
+        System.out.println("goal");
+        totalTime = currentTime;
+        minutes = 0;
+        seconds = 0;
         level3 = false;
         level1 = false;
         gameScene = false;
