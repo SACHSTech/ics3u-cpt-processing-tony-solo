@@ -1,14 +1,11 @@
 import processing.core.PApplet;
 import java.util.HashMap;
 
-import javax.naming.directory.SearchControls;
-import javax.print.attribute.SetOfIntegerSyntax;
-
 
 public class Sketch extends PApplet {
 
 
-  // GLOBAL VARIABLES
+  // VARIABLES
   String difficulty; 
   String totalTime;
   String currentTime;
@@ -19,11 +16,11 @@ public class Sketch extends PApplet {
   int columns = 20;
   int sceneBGColour = 45;
   int count;
+  int count2;
   int playerIndexX;
   int playerIndexY;
   int seconds;
   int minutes;
-  int count2;
 
   float unitWidth = width/rows;
   float unitHeight = width/columns;
@@ -116,8 +113,9 @@ public class Sketch extends PApplet {
    * Called once at the beginning of execution, put your size all in this method
    */
   public void settings() {
-	// put your size call here
+	  // put your size call here
     size(width, height);
+
   }
 
   /** 
@@ -130,16 +128,19 @@ public class Sketch extends PApplet {
     obstaclesPos2();
     obstaclesPos3();
 
+    // set up scenes
     menuScene = true;
     gameScene = false;
     gameOverScene = false;
     scoreScene = false;
+
   }
 
   /**
    * Called repeatedly, anything drawn to the screen goes here
    */
   public void draw() {
+    // draws scene
     if (menuScene) {
       menuScene();
     }
@@ -158,7 +159,10 @@ public class Sketch extends PApplet {
 
 
   // OTHER METHODS
-  // menu scene
+  
+  /**
+  * Changes to menu scene 
+  */
   public void menuScene() {
     background(sceneBGColour);
 
@@ -187,7 +191,9 @@ public class Sketch extends PApplet {
     
   }
 
-  // game scene
+  /**
+  * Changes to game scene
+  */
   public void gameScene() {
     background(220);
 
@@ -201,9 +207,12 @@ public class Sketch extends PApplet {
     else if (level3) {
       levels(grid3, obstacles3);
     }
+
   }
 
-  // game over scene
+  /**
+  * Changes to game over scene
+  */
   public void gameOverScene() {
     background(sceneBGColour);
 
@@ -221,7 +230,9 @@ public class Sketch extends PApplet {
 
   }
 
-  // score scene
+  /**
+  * Changes to score scene 
+  */
   public void scoreScene() {
     background(sceneBGColour);
 
@@ -242,14 +253,19 @@ public class Sketch extends PApplet {
 
   }
   
-  // draw levels
-  public void levels(int [][] array, HashMap<Float, Float> hashMap) {
+  /**
+  * Draws the levels 
+  * 
+  * @param level  the level to be played (1,2,3)
+  * @param obstaclePos  the positions of the obstacles
+  */
+  public void levels(int [][] level, HashMap<Float, Float> obstaclePos) {
     // interval for obstacle appearing
     if (count == 165) {
       count = 0;
     }
     count++;
-    // iterating 60 times = 1 second
+    // 60 iterations = 1 second
     if (count2 == 60) {
       seconds++;
       count2 = 0;
@@ -267,7 +283,7 @@ public class Sketch extends PApplet {
         unitY = unitHeight * j;
 
         // fill the walls in
-        if (array[j][i] == 1) {
+        if (level[j][i] == 1) {
           fill(1);
         } 
         else {
@@ -278,19 +294,19 @@ public class Sketch extends PApplet {
         // fill the obstacles in
         if (difficulty == "Easy") {
           if (count >= 0 && count <= 100) {
-            obstacles(hashMap);
+            obstacles(obstaclePos);
           }
         }
         else if (difficulty == "Hard") {
           if (count >= 0 && count <= 140) {
-            obstacles(hashMap);
+            obstacles(obstaclePos);
           }
         }
       }
     }
 
     goal();
-    movePlayer(array);
+    movePlayer(level);
 
     if (seconds < 10) {
       currentTime = minutes + ":" + "0" + seconds;
@@ -305,23 +321,28 @@ public class Sketch extends PApplet {
 
   }
 
-  // move player 
-  public void movePlayer(int [][] array) {
+  /**
+  * moves the player
+  * 
+  * @param level  the level to be played (1,2,3)
+  */
+  public void movePlayer(int [][] level) {
     // translate player pixel position to an index on grid array 
     playerIndexX = (int)playerX / 40;
     playerIndexY = (int)playerY / 40;
 
+    // controls + checks if there is a wall in front
     if (keyPressed) {
-      if (keyCode == UP && playerY > 0 && array[playerIndexY-1][playerIndexX] == 0) {
+      if (keyCode == UP && playerY > 0 && level[playerIndexY-1][playerIndexX] == 0) {
         playerY -= unitHeight;
       }
-      else if (keyCode == DOWN && playerY < height - unitHeight && array[playerIndexY+1][playerIndexX] == 0) {
+      else if (keyCode == DOWN && playerY < height - unitHeight && level[playerIndexY+1][playerIndexX] == 0) {
         playerY += unitHeight;
       }
-      else if (keyCode == LEFT && playerX > 0 && array[playerIndexY][playerIndexX-1] == 0) {
+      else if (keyCode == LEFT && playerX > 0 && level[playerIndexY][playerIndexX-1] == 0) {
         playerX -= unitWidth;
       }
-      else if (keyCode == RIGHT && playerX < width - unitWidth && array[playerIndexY][playerIndexX+1] == 0) {
+      else if (keyCode == RIGHT && playerX < width - unitWidth && level[playerIndexY][playerIndexX+1] == 0) {
         playerX += unitWidth;
       }
     }
@@ -334,7 +355,40 @@ public class Sketch extends PApplet {
 
   } 
 
-  // button
+  /**
+  * draws obstacles in level
+  * 
+  * @param obstaclePos the positions of the obstacles 
+  */
+  public void obstacles(HashMap<Float, Float> obstaclePos) {
+    fill(255, 0, 0);
+    for (float i : obstaclePos.keySet()) {
+      rect(i, obstaclePos.get(i), unitWidth, unitHeight);
+
+      // if player hit by obstacle
+      if (playerX == i && playerY == obstaclePos.get(i)) {
+        // reset player position & timer
+        playerIndexX = 0;
+        playerIndexY = 0;
+        playerX = unitWidth;
+        playerY = unitHeight;
+        seconds = 0;
+        minutes = 0;
+
+        // change scene
+        level1 = false;
+        level2 = false;
+        level3 = false;
+        gameScene = false;
+        gameOverScene = true;
+      }
+    }
+
+  }
+
+  /**
+  * executes an event when mouse clicks button
+  */
   public void mouseClicked() {
     if (menuScene) {
       if(!firstButtonClicked) {
@@ -381,36 +435,10 @@ public class Sketch extends PApplet {
     }
     
   }
-    
-  // draw the obstacles in levels
-  public void obstacles(HashMap<Float, Float> hashMap) {
-    fill(255, 0, 0);
-    for (float i : hashMap.keySet()) {
-      rect(i, hashMap.get(i), unitWidth, unitHeight);
 
-      // if player hit by obstacle
-      if (playerX == i && playerY == hashMap.get(i)) {
-        System.out.println("hit");
-        // reset player position & timer
-        playerIndexX = 0;
-        playerIndexY = 0;
-        playerX = unitWidth;
-        playerY = unitHeight;
-        seconds = 0;
-        minutes = 0;
-
-        // change scene
-        level1 = false;
-        level2 = false;
-        level3 = false;
-        gameScene = false;
-        gameOverScene = true;
-      }
-    }
-
-  }
-
-  // goal
+  /**
+  * executes an event when mouse clicks button
+  */
   public void goal() {
     // draw goal
     fill(0, 255, 0);
@@ -428,7 +456,6 @@ public class Sketch extends PApplet {
         level3 = true;
       }
       else if (level3) {
-        System.out.println("goal");
         totalTime = currentTime;
         minutes = 0;
         seconds = 0;
@@ -441,7 +468,9 @@ public class Sketch extends PApplet {
 
   }
 
-  // level 1 obstacles pos
+  /**
+  * obstacle positions for level 1
+  */
   public void obstaclesPos1() {
     obstacles1.put(unitWidth*3, unitHeight*9);
     obstacles1.put(unitWidth*8, unitHeight);
@@ -450,7 +479,9 @@ public class Sketch extends PApplet {
 
   }
 
-  // level 2 obstacles pos
+  /**
+  * obstacle positions for level 2
+  */
   public void obstaclesPos2() {
     obstacles2.put(unitWidth*5, unitHeight*3);
     obstacles2.put(unitWidth*10, unitHeight*3);
@@ -463,7 +494,9 @@ public class Sketch extends PApplet {
 
   }
 
-  // level 3 obstacles pos
+  /**
+  * obstacle positions for level 3
+  */
   public void obstaclesPos3() {
     obstacles3.put(unitWidth*6, unitHeight*4);
     obstacles3.put(unitWidth*2, unitHeight*9);
